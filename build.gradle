@@ -1,0 +1,26 @@
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '0.9.9'
+}
+
+scmVersion {
+    tag {
+        prefix = ''
+        createReleaseCommit = true
+    }
+}
+
+project.group = 'com.ofg'
+project.version = scmVersion.version
+
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.7'
+
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'junit:junit:4.11'
+}
