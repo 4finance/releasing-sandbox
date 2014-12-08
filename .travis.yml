@@ -13,7 +13,7 @@ after_success:
   - git config --global push.default simple
   - git remote set-url origin "https://${GH_TOKEN}@github.com/4finance/releasing-sandbox.git"
   - git commit -m "Real empty commit" --allow-empty
-  - git push origin ${TRAVIS_BRANCH}
+  - git push origin HEAD:${TRAVIS_BRANCH}
 
 env:
   global:
