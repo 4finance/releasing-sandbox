@@ -15,6 +15,7 @@ script:
   - git config push.default simple
   - git remote set-url origin "https://${GH_TOKEN}@github.com/4finance/releasing-sandbox.git"
   - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
+  - ./gradle bintrayUpload
 #Manual push to workaround: https://github.com/allegro/axion-release-plugin/issues/32
   - git push origin HEAD:${TRAVIS_BRANCH}
   - git push origin --tags
@@ -22,5 +23,7 @@ script:
 
 env:
   global:
-    - TERM=dumb
-    - secure: S39OzAmB8eajw0LNlVaDnB1xxlwcDZNrlbsA3CTYAPCkB/mJVCwyGcQsqYsrtWBh/7HpbjyLA/FE9G5n1Xa/vOUxRoN/OZJLVUOGNnHuJgLyVoO8mFk2gSc1cdzTjscRRKB2uRLB9tggWfOwlRXttRsSUfDRB/fDOm3uumgA2EU=
+  - TERM=dumb
+  - secure: S39OzAmB8eajw0LNlVaDnB1xxlwcDZNrlbsA3CTYAPCkB/mJVCwyGcQsqYsrtWBh/7HpbjyLA/FE9G5n1Xa/vOUxRoN/OZJLVUOGNnHuJgLyVoO8mFk2gSc1cdzTjscRRKB2uRLB9tggWfOwlRXttRsSUfDRB/fDOm3uumgA2EU=
+  - secure: HdxuhA7jGTkNfQfuBP9TrfkXkYUzPS1AgMjtKyxGXdOHUxLYzSOArut0LGnJzLEKYKDPIXlXbc57K7x8iZ6vHhFf2O/UjUdmSPVuJFZCiFBidC7/8vtkSVLincvr9yJEhP4TKR2ownZFhFupjGrvtbtqGjCkwVy5qvgJGcgOHL0=
+  - secure: jzR5cJ4DqemfIDorVjIjoCAcXNmjrWX5VPXdMgL5cYeu9IfHdkxJ54DwPOGRs2YNmgvzZRPHhmdYYzl9hZ2QMeb6kuHsH052DrWxKl0JTruZivcTFb2KlAOSxBhwvjYl1rX5TdIBNYlarM5I8C20yuwS8rXeKRRyjDiFWA2+xsA=
