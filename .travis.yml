@@ -6,6 +6,7 @@ install:
   - ./gradlew --version
 
 script:
+  - set -e
 #  - "./gradlew check --info --stacktrace --continue"
   - git --version
   - echo "Do compilcated build logic"
