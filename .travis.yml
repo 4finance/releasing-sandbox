@@ -10,11 +10,15 @@ script:
   - git --version
   - echo "Do compilcated build logic"
 
-  - git config --global user.email "4financebot@gmail.com"
-  - git config --global user.name "4Finance Bot"
-  - git config --global push.default simple
+  - git config user.email "4financebot@gmail.com"
+  - git config user.name "4Finance Bot"
+  - git config push.default simple
   - git remote set-url origin "https://${GH_TOKEN}@github.com/4finance/releasing-sandbox.git"
-  - ./gradlew release -Prelease.disableRemoteCheck
+  - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
+#Manual push to workaround: https://github.com/allegro/axion-release-plugin/issues/32
+  - git push origin HEAD:${TRAVIS_BRANCH}
+  - git push origin --tags
+
 
 env:
   global:
