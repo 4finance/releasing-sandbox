@@ -2,9 +2,11 @@ language: groovy
 jdk:
   - oraclejdk8
 
+install:
+  - ./gradlew --version
+
 script:
 #  - "./gradlew check --info --stacktrace --continue"
-  - ./gradlew --version
   - git --version
   - echo "Do compilcated build logic"
 
