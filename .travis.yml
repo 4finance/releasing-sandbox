@@ -10,13 +10,11 @@ script:
   - git --version
   - echo "Do compilcated build logic"
 
-after_success:
   - git config --global user.email "4financebot@gmail.com"
   - git config --global user.name "4Finance Bot"
   - git config --global push.default simple
   - git remote set-url origin "https://${GH_TOKEN}@github.com/4finance/releasing-sandbox.git"
-  - git commit -m "Real empty commit" -m "[ci skip]" --allow-empty
-  - git push origin HEAD:${TRAVIS_BRANCH}
+  - ./gradlew release
 
 env:
   global:
