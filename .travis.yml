@@ -15,7 +15,7 @@ script:
   - git config push.default simple
   - git remote set-url origin "https://${GH_TOKEN}@github.com/4finance/releasing-sandbox.git"
   - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
-  - ./gradle bintrayUpload
+  - ./gradlew bintrayUpload
 #Manual push to workaround: https://github.com/allegro/axion-release-plugin/issues/32
   - git push origin HEAD:${TRAVIS_BRANCH}
   - git push origin --tags
