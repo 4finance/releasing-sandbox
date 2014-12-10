@@ -14,7 +14,7 @@ script:
 - ./gradlew check --info --stacktrace --continue
 - source gradle/setGitVariables.sh
 - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
-- ./gradlew finalizeRelease
+- ./gradlew finalizeRelease --info --stacktrace
 
 env:
   global:

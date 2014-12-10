@@ -6,6 +6,7 @@ bintray {
     user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
     key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
     publications = ['mavenJava']
+    dryRun = project.hasProperty('dryRun')
     pkg {
         repo = 'sandbox'    //TODO: Change to micro
         userOrg = '4finance'
