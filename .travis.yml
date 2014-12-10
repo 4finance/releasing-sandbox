@@ -2,14 +2,15 @@ language: groovy
 jdk:
   - oraclejdk8
 
+before_install:
+ - git --version
+
 install:
-  - ./gradlew --version
+  - ./gradlew assemble
 
 script:
   - set -e
-#  - "./gradlew check --info --stacktrace --continue"
-  - git --version
-  - echo "Do compilcated build logic"
+  - ./gradlew check --info --stacktrace --continue
 
   - git config user.email "4financebot@gmail.com"
   - git config user.name "4Finance Bot"
@@ -20,7 +21,6 @@ script:
 #Manual push to workaround: https://github.com/allegro/axion-release-plugin/issues/32
   - git push origin HEAD:${TRAVIS_BRANCH}
   - git push origin --tags
-
 
 env:
   global:
