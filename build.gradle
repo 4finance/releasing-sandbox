@@ -5,7 +5,7 @@ plugins {
 }
 scmVersion {
     tag {
-        prefix = ''
+        prefix = 'gsand'
         createReleaseCommit = true
         releaseCommitMessage { version, position -> "release version: ${version}\n\n[ci skip]" }
     }
