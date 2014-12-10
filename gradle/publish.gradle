@@ -1,0 +1,17 @@
+//apply plugin: 'com.jfrog.bintray'
+
+tasks.bintrayUpload.dependsOn 'build'
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
+    key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
+    publications = ['mavenJava']
+    pkg {
+        repo = 'sandbox'    //TODO: Change to micro
+        userOrg = '4finance'
+        name = project.name
+        desc = project.description
+        licenses = ['Apache-2.0']
+        publish = false //TODO
+    }
+}

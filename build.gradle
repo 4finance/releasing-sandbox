@@ -3,6 +3,7 @@ plugins {
     id "com.jfrog.bintray" version "1.0"
     id "maven-publish"
 }
+
 scmVersion {
     tag {
         prefix = 'gsand'
@@ -10,31 +11,23 @@ scmVersion {
         releaseCommitMessage { version, position -> "release version: ${version}\n\n[ci skip]" }
     }
 }
+
 project.group = 'com.ofg'
 project.version = scmVersion.version
+
 apply plugin: 'groovy'
+apply from: 'gradle/release.gradle'
+
 repositories {
     jcenter()
 }
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'junit:junit:4.11'
 }
-bintrayUpload.dependsOn 'build'
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
-    key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
-    publications = ['mavenJava']
-    pkg {
-        repo = 'sandbox'
-        userOrg = '4finance'
-        name = project.name
-        desc = project.description
-        licenses = ['Apache-2.0']
-        publish = false
-    }
-}
+
 //Mostly boilerplate code... - non plugin related https://github.com/etiennestuder/gradle-plugindev-plugin version would be useful
 publishing {
     publications {
@@ -56,6 +49,7 @@ publishing {
         }
     }
 }
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource

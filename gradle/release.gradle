@@ -1,0 +1,7 @@
+assert project == rootProject
+
+apply from: rootProject.file("gradle/publish.gradle")
+
+task("finalizeRelease") {
+    println "Finalizing release..."
+}
