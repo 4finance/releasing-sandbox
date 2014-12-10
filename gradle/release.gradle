@@ -12,7 +12,8 @@ task("releaseNeeded") {
         def pr = System.env.TRAVIS_PULL_REQUEST
         def ci = System.env.CI
         def localRelease = project.hasProperty("localRelease")
-        ext.needed = dryRun || (pr == 'false' && branch == 'master') || (ci == null && pr == null && localRelease)
+//        ext.needed = dryRun || (pr == 'false' && branch == 'master') || (ci == null && pr == null && localRelease)
+        ext.needed = dryRun || (pr == 'false' /*&& branch == 'master'*/) || (ci == null && pr == null && localRelease)  //TODO: master is ok in sanbox project
         logger.lifecycle("Release needed: {}, branch: {}, pull request: {}, dry run: {}, ci: {}, localRelease: {}.", needed, branch, pr, dryRun, ci, localRelease)
     }
 }
