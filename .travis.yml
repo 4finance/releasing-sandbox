@@ -12,6 +12,7 @@ install:
 script:
 - set -e
 - ./gradlew check --info --stacktrace --continue
+- source gradle/setGitVariables.sh
 
 env:
   global:
