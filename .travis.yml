@@ -22,7 +22,7 @@ script:
   - git push origin HEAD:${TRAVIS_BRANCH}
   - git push origin --tags
   - RELEASED_VERSION=`./gradlew currentVersion | grep version | cut -f3 -d" "`
-  - curl -vvf -u${BINTRAY_USER}:${BINTRAY_APIKEY} -H "Content-Type: application/json" -X POST https://api.bintray.com/content/4finance/sandbox/releasing-sandbox/${RELEASED_VERSION}/publish
+  - 'curl -vvf -u${BINTRAY_USER}:${BINTRAY_APIKEY} -H "Content-Type: application/json" -X POST https://api.bintray.com/content/4finance/sandbox/releasing-sandbox/${RELEASED_VERSION}/publish'
 
 env:
   global:
