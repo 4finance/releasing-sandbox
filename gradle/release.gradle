@@ -67,7 +67,7 @@ task("finalizeRelease") {
     }
 }
 
-//TODO: Move before making commit by Axion
+//TODO: Move earlier than making commit by Axion
 private void configureGit() {
     runCommand "git", "config", "user.email", "4financebot@gmail.com"
     runCommand "git", "config", "user.name", "4Finance Bot"
