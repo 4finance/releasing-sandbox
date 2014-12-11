@@ -12,9 +12,11 @@ task("releaseNeeded") {
     doLast {
         def pr = System.env.TRAVIS_PULL_REQUEST
         def ci = System.env.CI
-//        ext.needed = dryRun || (pr == 'false' && branch == 'master') || (ci == null && pr == null && localRelease)
-        ext.needed = dryRun || (pr == 'false' /*&& branch == 'master'*/) || (ci == null && pr == null && localRelease)  //TODO: master is ok in sandbox project
-        logger.lifecycle("Release needed: {}, branch: {}, pull request: {}, dry run: {}, ci: {}, localRelease: {}.", needed, branch, pr, dryRun, ci, localRelease)
+        boolean isTriggerInCommit = isReleaseTriggerInLastCommitMessage()
+//        ext.needed = dryRun || (pr == 'false' && branch == 'master' && isTriggerInCommit) || (ci == null && pr == null && localRelease)
+        ext.needed = dryRun || (pr == 'false' /*&& branch == 'master'*/  && isTriggerInCommit) || (ci == null && pr == null && localRelease)  //TODO: master is ok in sandbox project
+        logger.lifecycle("Release needed: {}, branch: {}, pull request: {}, dry run: {}, ci: {}, isTriggerInCommit: {}, localRelease: {}.",
+                needed, branch, pr, dryRun, ci, isTriggerInCommit, localRelease)
 
         if (dryRun) {
             //TODO: Does not impact on Axion - earlier evaluated?
