@@ -1,5 +1,6 @@
 plugins {
     id 'pl.allegro.tech.build.axion-release' version '0.9.9'
+    id "org.10ne.rest" version "0.3.1"
     id "com.jfrog.bintray" version "1.0"
     id "maven-publish"
 }
@@ -61,4 +62,18 @@ task javadocJar(type: Jar, dependsOn: groovydoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+//TODO: Due to new Gradle import format it cannot be moved to release.gradle
+//TODO: Response is not displayed which could be problematic - as an alternative `curl` could be used
+task publishUploadedArtifacts(type: org._10ne.gradle.rest.RestTask) {
+    dependsOn releaseNeeded
+    mustRunAfter finalizeRelease
+    onlyIf { releaseNeeded.needed && !project.hasProperty('dryRun') }  //TODO: Not available in rest-gradle-plugin yet - https://github.com/noamt/rest-gradle-plugin/issues/9
+    httpMethod = 'post'
+    uri = "https://api.bintray.com/content/4finance/${bintray.pkg.repo}/${project.name}/${project.version}/publish"
+    username = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
+    password = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
+    contentType = groovyx.net.http.ContentType.JSON
+    requestBody = [discard: 'true'] //TODO: For testing Travis - change to false
 }
