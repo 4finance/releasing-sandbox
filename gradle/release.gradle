@@ -51,10 +51,11 @@ task("finalizeRelease") {
 }
 
 private void configureGit() {
-    runCommand "git", "config", "user.email", "4financebot@gmail.com"
-    runCommand "git", "config", "user.name", "4Finance Bot"
+    runCommand "git", "config", "user.email", "\"4financebot@gmail.com\""
+    runCommand "git", "config", "user.name", "\"4Finance Bot\""
     runCommand "git", "config", "push.default", "simple"
     runCommand "git", "remote", "set-url", "origin", new MaskedArg(value: "https://${System.env.GH_TOKEN}@github.com/4finance/releasing-sandbox.git")
+    runCommand "git", "config", "--list"
 }
 
 private void runCommand(Object ... args) {
