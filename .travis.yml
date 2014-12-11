@@ -15,7 +15,7 @@ script:
 - source gradle/setGitVariables.sh
 - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
 - ./gradlew finalizeRelease -PbintrayUser=${BINTRAY_USER} -PbintrayKey=${BINTRAY_API_KEY} --info --stacktrace
-- git push --follow-tags origin HEAD:topic/gradleTests
+- git push --follow-tags origin HEAD:${TRAVIS_BRANCH}
 - ./gradlew publishUploadedArtifacts -PbintrayUser=${BINTRAY_USER} -PbintrayKey=${BINTRAY_API_KEY} --info --stacktrace
 
 env:
