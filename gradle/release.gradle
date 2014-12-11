@@ -28,6 +28,11 @@ bintrayUpload {
     }
 }
 
+release {
+    dependsOn releaseNeeded
+    onlyIf { releaseNeeded.needed }
+}
+
 task("finalizeRelease") {
     dependsOn bintrayUpload, releaseNeeded
     onlyIf { releaseNeeded.needed }
@@ -39,7 +44,6 @@ task("finalizeRelease") {
 
         def pushCommand = ["git", "push", "--follow-tags", "origin"]
         if (!localRelease) {
-            configureGit()
             pushCommand << "HEAD:${branch}"
         }
         if (dryRun) {
@@ -50,12 +54,12 @@ task("finalizeRelease") {
     }
 }
 
+//TODO: Move before making commit by Axion
 private void configureGit() {
-    runCommand "git", "config", "user.email", "\"4financebot@gmail.com\""
-    runCommand "git", "config", "user.name", "\"4Finance Bot\""
+    runCommand "git", "config", "user.email", "4financebot@gmail.com"
+    runCommand "git", "config", "user.name", "4Finance Bot"
     runCommand "git", "config", "push.default", "simple"
     runCommand "git", "remote", "set-url", "origin", new MaskedArg(value: "https://${System.env.GH_TOKEN}@github.com/4finance/releasing-sandbox.git")
-    runCommand "git", "config", "--list"
 }
 
 private void runCommand(Object ... args) {

@@ -12,8 +12,10 @@ install:
 script:
 - set -e
 - ./gradlew check --info --stacktrace --continue
+- source gradle/setGitVariables.sh
 - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
 - ./gradlew finalizeRelease  -PbintrayUser=${BINTRAY_USER} -PbintrayKey=${BINTRAY_API_KEY} --info --stacktrace
+- git push --follow-tags origin HEAD:topic/gradleTests
 
 env:
   global:
