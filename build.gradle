@@ -26,6 +26,17 @@ project.version = scmVersion.version
 apply plugin: 'groovy'
 apply from: 'gradle/release.gradle'
 
+bintray {
+    pkg {
+        repo = 'sandbox'
+        publish = false //TODO: Temporarily
+    }
+}
+
+publishUploadedArtifacts {
+    requestBody = [discard: 'true'] //TODO: Temporarily
+}
+
 repositories {
     jcenter()
 }
@@ -34,11 +45,4 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'junit:junit:4.11'
-}
-
-bintray {
-    pkg {
-        repo = 'sandbox'    //TODO: Change to micro
-        publish = false //TODO
-    }
 }

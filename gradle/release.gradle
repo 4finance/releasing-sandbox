@@ -1,7 +1,7 @@
 //Based on release.gradle from Mockito project by Szczepan Faber - https://github.com/mockito/mockito
 assert project == rootProject
 
-//To allow to use GrGit and RestTask classes as buildscript{} closure has to be in every included file
+//To allow to use GrGit and RestTask classes as 'buildscript' closure has to be in every included file
 buildscript {
     repositories {
         mavenLocal()
@@ -29,11 +29,6 @@ task("releaseNeeded") {
         ext.needed = dryRun || (pr == 'false' /*&& branch == 'master'*/  && isTriggerInCommit) || (ci == null && pr == null && localRelease)  //TODO: master is ok in sandbox project
         logger.lifecycle("Release needed: {}, branch: {}, pull request: {}, dry run: {}, ci: {}, isTriggerInCommit: {}, localRelease: {}.",
                 needed, branch, pr, dryRun, ci, isTriggerInCommit, localRelease)
-
-        if (dryRun) {
-            //TODO: Does not impact on Axion - earlier evaluated?
-            project.ext.set("release.dryRun", "")
-        }
     }
 }
 
@@ -50,6 +45,7 @@ bintrayUpload {
 release {
     dependsOn releaseNeeded
     onlyIf { releaseNeeded.needed }
+    //TODO: dryRun currently broken in Axion - -Drelease.dryRun has to be set as well
     doFirst {
         if (dryRun) {
             println "release.dryRun: " + project.hasProperty("release.dryRun")
@@ -75,52 +71,29 @@ task("finalizeRelease") {
             pushCommand << '--dry-run'
         }
 
+        //TODO: Switch to grgit when problem with jgit and pushing with HTTPS is solved - https://github.com/allegro/axion-release-plugin/issues/32
         runCommand pushCommand
-
-/*
-        //TODO: Push fails on Trvis with NPE like in https://github.com/allegro/axion-release-plugin/issues/32
-        def grgit = Grgit.open(getRootDir())
-        def pushParams = [tags: true, remote: "origin"]
-        if (!localRelease) {
-            pushParams << [refsOrSpecs: ["HEAD:${branch}"]]
-        }
-//    //TODO: Not supported in Grgit yet - my PR is waiting for merge - https://github.com/ajoberstar/grgit/pull/44
-//    if (ext.dryRun) {
-//        pushParams.put(dryRun: true)
-//    }
-//    grgit.push(pushParams)
-
-        if (dryRun) {
-            println "Dry-running push to GH with tags"
-        } else {
-            grgit.push(pushParams)
-        }
-*/
     }
 }
 
-//TODO: Move earlier than making commit by Axion
-private void configureGit() {
-    runCommand "git", "config", "user.email", "4financebot@gmail.com"
-    runCommand "git", "config", "user.name", "4Finance Bot"
-    runCommand "git", "config", "push.default", "simple"
-    runCommand "git", "remote", "set-url", "origin", new MaskedArg(value: "https://${System.env.GH_TOKEN}@github.com/4finance/releasing-sandbox.git")
+task publishUploadedArtifacts(type: org._10ne.gradle.rest.RestTask) {
+    dependsOn releaseNeeded
+    mustRunAfter finalizeRelease
+    onlyIf { releaseNeeded.needed && !project.hasProperty('dryRun') }  //TODO: Not available in rest-gradle-plugin yet - https://github.com/noamt/rest-gradle-plugin/issues/9
+    httpMethod = 'post'
+    uri = "broken-should-be-overridden-in-do-frst"
+    username = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
+    password = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
+    contentType = groovyx.net.http.ContentType.JSON
+    requestBody = [discard: 'false']
+
+    doFirst {
+        println "RB: ${requestBody}"
+        //Update uri with 'bintray.pkg.repo' override in end project
+        uri = "https://api.bintray.com/content/4finance/${bintray.pkg.repo}/${project.name}/${project.version}/publish"
+    }
 }
 
-private void runCommand(Object ... args) {
-    runCommand(args as List)
-}
-private void runCommand(Collection args) {
-    logger.lifecycle("--- Executing: {}", args.join(" "))
-    exec { commandLine args.collect { it instanceof MaskedArg? it.value : it.toString()} }
-    logger.lifecycle("--- Completed!", args)
-}
-class MaskedArg {
-    String value
-    String toString() { "<masked>" }
-}
-
-//TODO: Due to new Gradle import format it cannot be moved to release.gradle
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 
@@ -143,14 +116,23 @@ private boolean isReleaseTriggerInLastCommitMessage(boolean isLocalRelease) {
     return history[0]?.fullMessage?.contains(RELEASE_TRIGGER)
 }
 
-task publishUploadedArtifacts(type: org._10ne.gradle.rest.RestTask) {
-    dependsOn releaseNeeded
-    mustRunAfter finalizeRelease
-    onlyIf { releaseNeeded.needed && !project.hasProperty('dryRun') }  //TODO: Not available in rest-gradle-plugin yet - https://github.com/noamt/rest-gradle-plugin/issues/9
-    httpMethod = 'post'
-    uri = "https://api.bintray.com/content/4finance/${bintray.pkg.repo}/${project.name}/${project.version}/publish"
-    username = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
-    password = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
-    contentType = groovyx.net.http.ContentType.JSON
-    requestBody = [discard: 'true'] //TODO: For testing Travis - change to false
+//Temporarily replaced with shell script. Should be run before Axion
+private void configureGit() {
+    runCommand "git", "config", "user.email", "4financebot@gmail.com"
+    runCommand "git", "config", "user.name", "4Finance Bot"
+    runCommand "git", "config", "push.default", "simple"
+    runCommand "git", "remote", "set-url", "origin", new MaskedArg(value: "https://${System.env.GH_TOKEN}@github.com/4finance/releasing-sandbox.git")
+}
+
+private void runCommand(Object ... args) {
+    runCommand(args as List)
+}
+private void runCommand(Collection args) {
+    logger.lifecycle("--- Executing: {}", args.join(" "))
+    exec { commandLine args.collect { it instanceof MaskedArg? it.value : it.toString()} }
+    logger.lifecycle("--- Completed!", args)
+}
+class MaskedArg {
+    String value
+    String toString() { "<masked>" }
 }

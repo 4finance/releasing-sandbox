@@ -9,7 +9,7 @@ bintray {
     publications = ['mavenJava']
     dryRun = project.hasProperty('dryRun')
     pkg {
-        repo = 'foo'    //TODO: Change to micro
+        repo = 'micro'
         userOrg = '4finance'
         name = project.name
         desc = project.description
