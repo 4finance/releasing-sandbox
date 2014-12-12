@@ -18,7 +18,7 @@ apply from: rootProject.file("gradle/publish.gradle")
 def dryRun = project.hasProperty('dryRun')
 def branch = System.env.TRAVIS_BRANCH
 boolean localRelease = project.hasProperty("localRelease")
-boolean isTriggerInCommit = isReleaseTriggerInLastCommitMessage()
+boolean isTriggerInCommit = isReleaseTriggerInLastCommitMessage(localRelease)
 
 task("releaseNeeded") {
     println "Checking if release is needed..."
@@ -111,11 +111,22 @@ class MaskedArg {
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 
-private boolean isReleaseTriggerInLastCommitMessage() {
+private boolean isReleaseTriggerInLastCommitMessage(boolean isLocalRelease) {
     final String RELEASE_TRIGGER = '#DO_RELEASE'
 
     def grgit = Grgit.open(getRootDir())
-    List<Commit> history = grgit.log(maxCommits: 1)
+    List<Commit> history = []
+
+    if (isLocalRelease) {
+        history = grgit.log(maxCommits: 1)
+    } else {
+        def travisBranch = System.env.TRAVIS_BRANCH
+        if (travisBranch != null) {
+            history = grgit.log(includes: [travisBranch], maxCommits: 1)
+        }
+    }
+
+    println history
     return history[0]?.fullMessage?.contains(RELEASE_TRIGGER)
 }
 
