@@ -1,11 +1,23 @@
 //Based on release.gradle from Mockito project by Szczepan Faber - https://github.com/mockito/mockito
 assert project == rootProject
 
+//To allow to use classes from buildscript dependencies that secion has to be in every included file
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'pl.allegro.tech.build', name: 'axion-release-plugin', version: '0.9.9'
+        classpath "org._10ne.gradle:rest-gradle-plugin:0.3.1"
+    }
+}
+
 apply from: rootProject.file("gradle/publish.gradle")
 
 def dryRun = project.hasProperty('dryRun')
 def branch = System.env.TRAVIS_BRANCH
-def localRelease = project.hasProperty("localRelease")
+boolean localRelease = project.hasProperty("localRelease")
 boolean isTriggerInCommit = isReleaseTriggerInLastCommitMessage()
 
 task("releaseNeeded") {
@@ -55,15 +67,22 @@ task("finalizeRelease") {
         }
         println "Finalizing release..."
 
-        def pushCommand = ["git", "push", "--follow-tags", "origin"]
+        def grgit = Grgit.open(getRootDir())
+        def pushParams = [tags: true, remote: "origin"]
         if (!localRelease) {
-            pushCommand << "HEAD:${branch}"
+            pushParams << [refsOrSpecs: ["HEAD:${branch}"]]
         }
-        if (dryRun) {
-            pushCommand << '--dry-run'
-        }
+//    //TODO: Not supported in Grgit yet - my PR is waiting for merge - https://github.com/ajoberstar/grgit/pull/44
+//    if (ext.dryRun) {
+//        pushParams.put(dryRun: true)
+//    }
+//    grgit.push(pushParams)
 
-        runCommand pushCommand
+        if (dryRun) {
+            println "Dry-running push to GH with tags"
+        } else {
+            grgit.push(pushParams)
+        }
     }
 }
 
@@ -86,4 +105,28 @@ private void runCommand(Collection args) {
 class MaskedArg {
     String value
     String toString() { "<masked>" }
+}
+
+//TODO: Due to new Gradle import format it cannot be moved to release.gradle
+import org.ajoberstar.grgit.Commit
+import org.ajoberstar.grgit.Grgit
+
+private boolean isReleaseTriggerInLastCommitMessage() {
+    final String RELEASE_TRIGGER = '#DO_RELEASE'
+
+    def grgit = Grgit.open(getRootDir())
+    List<Commit> history = grgit.log(maxCommits: 1)
+    return history[0]?.fullMessage?.contains(RELEASE_TRIGGER)
+}
+
+task publishUploadedArtifacts(type: org._10ne.gradle.rest.RestTask) {
+    dependsOn releaseNeeded
+    mustRunAfter finalizeRelease
+    onlyIf { releaseNeeded.needed && !project.hasProperty('dryRun') }  //TODO: Not available in rest-gradle-plugin yet - https://github.com/noamt/rest-gradle-plugin/issues/9
+    httpMethod = 'post'
+    uri = "https://api.bintray.com/content/4finance/${bintray.pkg.repo}/${project.name}/${project.version}/publish"
+    username = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.properties['bintrayUser']
+    password = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.properties['bintrayKey']
+    contentType = groovyx.net.http.ContentType.JSON
+    requestBody = [discard: 'true'] //TODO: For testing Travis - change to false
 }
