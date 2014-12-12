@@ -1,14 +1,14 @@
 //Based on release.gradle from Mockito project by Szczepan Faber - https://github.com/mockito/mockito
 assert project == rootProject
 
-//To allow to use classes from buildscript dependencies that secion has to be in every included file
+//To allow to use GrGit and RestTask classes as buildscript{} closure has to be in every included file
 buildscript {
     repositories {
         mavenLocal()
         jcenter()
     }
     dependencies {
-        classpath group: 'pl.allegro.tech.build', name: 'axion-release-plugin', version: '0.9.9'
+        classpath "pl.allegro.tech.build:axion-release-plugin:0.9.9"
         classpath "org._10ne.gradle:rest-gradle-plugin:0.3.1"
     }
 }

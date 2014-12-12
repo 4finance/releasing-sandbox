@@ -1,16 +1,23 @@
-plugins {
-    id 'pl.allegro.tech.build.axion-release' version '0.9.9'
-    id "org.10ne.rest" version "0.3.1"
-    id "com.jfrog.bintray" version "1.0"
-    id "maven-publish"
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "pl.allegro.tech.build:axion-release-plugin:0.9.9"
+        classpath "org._10ne.gradle:rest-gradle-plugin:0.3.1"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+    }
 }
+
+apply plugin: 'pl.allegro.tech.build.axion-release'
 
 scmVersion {
     tag {
         prefix = 'gsand'
-        createReleaseCommit = true
-        releaseCommitMessage { version, position -> "release version: ${version}\n\n[ci skip]" }
     }
+    createReleaseCommit = true
+    releaseCommitMessage { version, position -> "release version: ${version}\n\n[ci skip]" }
 }
 
 project.group = 'com.ofg'
@@ -29,37 +36,9 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
-//Mostly boilerplate code... - non plugin related https://github.com/etiennestuder/gradle-plugindev-plugin version would be useful
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            //#89 - workaround to not to have only runtime dependencies in generated pom.xml
-            //Known limitation in maven-publish - - http://forums.gradle.org/gradle/topics/maven_publish_plugin_generated_pom_making_dependency_scope_runtime#reply_14120711
-            pom.withXml {
-                asNode().dependencies.'*'.findAll() {
-                    it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
-                        dep.name == it.artifactId.text()
-                    }
-                }.each() {
-                    it.scope*.value = 'compile'
-                }
-            }
-        }
+bintray {
+    pkg {
+        repo = 'sandbox'    //TODO: Change to micro
+        publish = false //TODO
     }
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-task javadocJar(type: Jar, dependsOn: groovydoc) {
-    classifier = 'javadoc'
-    from groovydoc.destinationDir
-}
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
