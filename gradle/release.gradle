@@ -67,6 +67,18 @@ task("finalizeRelease") {
         }
         println "Finalizing release..."
 
+        def pushCommand = ["git", "push", "--follow-tags", "origin"]
+        if (!localRelease) {
+            pushCommand << "HEAD:${branch}"
+        }
+        if (dryRun) {
+            pushCommand << '--dry-run'
+        }
+
+        runCommand pushCommand
+
+/*
+        //TODO: Push fails on Trvis with NPE like in https://github.com/allegro/axion-release-plugin/issues/32
         def grgit = Grgit.open(getRootDir())
         def pushParams = [tags: true, remote: "origin"]
         if (!localRelease) {
@@ -83,6 +95,7 @@ task("finalizeRelease") {
         } else {
             grgit.push(pushParams)
         }
+*/
     }
 }
 
@@ -126,7 +139,7 @@ private boolean isReleaseTriggerInLastCommitMessage(boolean isLocalRelease) {
         }
     }
 
-    println history
+    history.each { println "${it.id}: ${it.fullMessage}" }
     return history[0]?.fullMessage?.contains(RELEASE_TRIGGER)
 }
 
