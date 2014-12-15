@@ -5,7 +5,7 @@ buildscript {
         maven { url "http://dl.bintray.com/4finance/micro" }    //TODO: Remove when available in jcenter
     }
     dependencies {
-        classpath "com.ofg:micro-common-release:0.1.0"
+        classpath "com.ofg:micro-common-release:+"
     }
     dependencies {
         ant.unjar src: configurations.classpath.find { it.name.startsWith("micro-common-release") }, dest: 'build/release'
