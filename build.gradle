@@ -4,9 +4,10 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "pl.allegro.tech.build:axion-release-plugin:0.9.9"
-        classpath "org._10ne.gradle:rest-gradle-plugin:0.3.1"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+        classpath "com.ofg:micro-common-release:0.1.0"
+    }
+    dependencies {
+        ant.unjar src: configurations.classpath.find { it.name.startsWith("micro-common-release") }, dest: 'build/release'
     }
 }
 
@@ -23,13 +24,14 @@ scmVersion {
 project.group = 'com.ofg'
 project.version = scmVersion.version
 
+
 apply plugin: 'groovy'
-apply from: 'gradle/release.gradle'
+apply from: 'build/release/gradle/publish.gradle'
+apply from: 'build/release/gradle/release.gradle'
 
 bintray {
     pkg {
         repo = 'sandbox'
-        publish = false //TODO: Temporarily
     }
 }
 
