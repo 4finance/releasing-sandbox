@@ -21,8 +21,8 @@ boolean localRelease = project.hasProperty("localRelease")
 boolean isTriggerInCommit = isReleaseTriggerInLastCommitMessage(localRelease)
 
 task("releaseNeeded") {
-    println "Checking if release is needed..."
     doLast {
+        println "Checking if release is needed..."
         def pr = System.env.TRAVIS_PULL_REQUEST
         def ci = System.env.CI
 //        ext.needed = dryRun || (pr == 'false' && branch == 'master' && isTriggerInCommit) || (ci == null && pr == null && localRelease)
@@ -98,7 +98,7 @@ import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 
 private boolean isReleaseTriggerInLastCommitMessage(boolean isLocalRelease) {
-    final String RELEASE_TRIGGER = '#DO_RELEASE'
+    final String RELEASE_TRIGGER = '#DO_RELEASE'    //[do_release]?
 
     def grgit = Grgit.open(getRootDir())
     List<Commit> history = []
