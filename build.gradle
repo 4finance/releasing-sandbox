@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.ofg:micro-common-release:+"
+        classpath "com.ofg:micro-common-release:0.1.5"
     }
     dependencies {
         ant.unjar src: configurations.classpath.find { it.name.startsWith("micro-common-release") }, dest: 'build/release'
