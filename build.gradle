@@ -17,8 +17,6 @@ scmVersion {
     tag {
         prefix = 'gsand'
     }
-    createReleaseCommit = true
-    releaseCommitMessage { version, position -> "release version: ${version}\n\n[ci skip]" }
 }
 
 project.group = 'com.ofg'
@@ -28,6 +26,8 @@ project.version = scmVersion.version
 apply plugin: 'groovy'
 apply from: "${rootProject.buildDir}/release/gradle/publish.gradle"
 apply from: "${rootProject.buildDir}/release/gradle/release.gradle"
+
+//NOTE: All release and publishing modifications (including further scmVersion closure) should be put after the apply of publish.gradle and release.gradle
 
 bintray {
     pkg {
