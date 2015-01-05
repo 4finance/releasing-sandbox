@@ -17,17 +17,16 @@ scmVersion {
     tag {
         prefix = 'gsand'
     }
+    //NOTE: All other release and publishing modifications (including further scmVersion closure) should be put AFTER the apply of publish.gradle and/or release.gradle
+    //      (to be not overridden by the default values applied in those files)
 }
 
 project.group = 'com.ofg'
 project.version = scmVersion.version
 
-
 apply plugin: 'groovy'
 apply from: "${rootProject.buildDir}/release/gradle/publish.gradle"
 apply from: "${rootProject.buildDir}/release/gradle/release.gradle"
-
-//NOTE: All release and publishing modifications (including further scmVersion closure) should be put after the apply of publish.gradle and release.gradle
 
 bintray {
     pkg {
