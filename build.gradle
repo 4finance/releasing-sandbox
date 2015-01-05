@@ -26,8 +26,8 @@ project.version = scmVersion.version
 
 
 apply plugin: 'groovy'
-apply from: 'build/release/gradle/publish.gradle'
-apply from: 'build/release/gradle/release.gradle'
+apply from: "${rootProject.buildDir}/release/gradle/publish.gradle"
+apply from: "${rootProject.buildDir}/release/gradle/release.gradle"
 
 bintray {
     pkg {
