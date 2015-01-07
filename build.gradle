@@ -11,14 +11,12 @@ buildscript {
     }
 }
 
-apply plugin: 'pl.allegro.tech.build.axion-release'
+apply from: "${rootProject.buildDir}/release/gradle/version.gradle"
 
 scmVersion {
     tag {
         prefix = 'gsand'
     }
-    //NOTE: All other release and publishing modifications (including further scmVersion closure) should be put AFTER the apply of publish.gradle and/or release.gradle
-    //      (to be not overridden by the default values applied in those files)
 }
 
 project.group = 'com.ofg'
