@@ -12,16 +12,7 @@ script:
 - source build/release/gradle/setGitVariables.sh
 - ./gradlew release -Prelease.disableRemoteCheck -Prelease.localOnly --info --stacktrace
 - ./gradlew finalizeRelease publishUploadedArtifacts -PbintrayUser=${BINTRAY_USER} -PbintrayKey=${BINTRAY_API_KEY} --info --stacktrace
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then ./gradlew publishToMavenLocal --info; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then ./gradlew -q currentVersion | grep "Project version" | sed s/Project\ version\:\ //g > ~/.microInfraSpringCurrentVersion.txt; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then cat ~/.microInfraSpringCurrentVersion.txt; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then echo -n "0.8.4" > ~/.microInfraSpringCurrentVersion.txt; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then cat ~/.microInfraSpringCurrentVersion.txt; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then git clone https://github.com/4finance/boot-microservice.git; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then cd boot-microservice; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then echo "microInfraSpringVersion="`cat ~/.microInfraSpringCurrentVersion.txt` >> gradle.properties; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then cat gradle.properties; fi
-- if [ $DO_ACCEPTANCE_TESTS == true ]; then ./gradlew check; fi
+- if [ $DO_ACCEPTANCE_TESTS == true ]; then ./gradle/runBootMicroserviceAcceptanceTests.sh; fi
 
 language: groovy
 
