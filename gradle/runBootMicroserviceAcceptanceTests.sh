@@ -15,6 +15,8 @@ function cloneAndDoBuild {
 
     git clone https://github.com/4finance/"$1".git
     cd "$1"
+    #copy Gradle cache to not download dependencies again
+    cp -r ../.gradle/ .
     echo "microInfraSpringVersion="`cat ~/.microInfraSpringCurrentVersion.txt` >> gradle.properties
     cat gradle.properties
     ./gradlew check
