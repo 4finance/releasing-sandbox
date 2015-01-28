@@ -16,15 +16,12 @@ script:
 
 language: groovy
 
-jdk:
-- oraclejdk8
-
 matrix:
   include:
     # Release not skipped only in Java 7 build
     - jdk: oraclejdk7
       env: SKIP_RELEASE=false
-    # Acceptance tests only on Java 8
+    # Build on Java 8 with acceptance tests in micro
     - jdk: oraclejdk8
       env: DO_ACCEPTANCE_TESTS=true
 
