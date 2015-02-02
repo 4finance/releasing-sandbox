@@ -2,6 +2,8 @@ before_install:
 - git --version
 - "echo $GRADLE_OPTS"
 - "export GRADLE_OPTS='-Dorg.gradle.daemon=true'"
+- "echo $TRAVIS_JDK_VERSION"
+- "env"
 
 install:
 - ./gradlew assemble
